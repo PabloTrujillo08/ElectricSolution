@@ -1,0 +1,49 @@
+Un cliente puede tener mas de un contrato
+Un cliente puede tener mas de una finca
+Un cliente puede cambiar el metodo de pago
+Un cliente puede tener mas de una instalacion solar pero no en la misma finca
+
+
+Una factura solo puede ser de una finca
+Una factura solo puede ser de un contrato
+
+
+Un contrato solo puede estar en una finca
+Un contrato solo puede tener una tarifa
+
+
+
+Una finca no puede tener mas de un contrato
+Una finca puede tener instalacion solar 
+Una finca solo puede tener una potencia contratada
+
+
+
+La compañia puede tener tener muchas tarifas
+La compañia puede tener muchos contratos
+La compañia puede tener muchos clientes
+
+
+Una tarifa la pueden tener muchos clientes
+Una tarifa tiene caducidad, año a año se renueva
+Una tarifa tiene un precio por potencia contratada
+Una tarifa puede tener descuentos
+
+
+
+Una instalacion puede tener contador propio o alquilado
+Una instalacion puede tener una potencia contratada
+Una instalacion puede tener un boletin
+Una instalacion puede tener un contrato
+
+
+
+
+
+Una instalacion solar puede vender los excedentes
+Una instalacion solar puede tener baterias
+Una instalacion solar puede tener subvenciones
+
+
+
+

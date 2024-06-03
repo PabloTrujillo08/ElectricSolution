@@ -1,0 +1,56 @@
+.login-container {
+  max-width: 500px;
+  margin: auto;
+  padding: 20px;
+
+}
+
+input[type="email"], input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+button[type="submit"] {
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 30%;
+}
+
+
+  button[type="submit"]:hover {
+    opacity: 0.8;
+  }
+
+  button[type="cancel"]:hover {
+    opacity: 0.8;
+  }
+
+button {
+  color: white;
+  padding: 14px 10px; /* Ajusta el padding vertical y horizontal según sea necesario */
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 30%; /* Cambia el ancho a la mitad */
+}
+.button-group button {
+  width: 50%; /* Cada botón ocupa la mitad del espacio en el grupo */
+}
+
+.button-group {
+  display: flex;
+}
+
+.btn-cancel{
+    margin-left: 160px;
+}
+
+

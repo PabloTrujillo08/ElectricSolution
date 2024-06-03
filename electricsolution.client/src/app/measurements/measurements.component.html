@@ -1,0 +1,197 @@
+<ng-container *ngFor="let meter of meters; trackBy: trackById">
+  <div class="card my-3">
+    <div class="card-header" style="background: linear-gradient(135deg, #007bff, #0056b3); color: white;">
+      <h5 class="my-0 font-weight-bold"><i class="bi bi-lightbulb"></i> Resumen de Instalación Solar</h5>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-4">
+          <h6 class="text-secondary">Mediciones de CA</h6>
+          <ul class="list-unstyled">
+            <li>Potencia de Salida CA: <b>{{ meter.act_pw_o | customUnitPowerEnergyHours }}</b></li>
+            <li>Corriente de Salida CA: <b>{{ meter.ac_ao }} A</b></li>
+            <li>Voltaje de Salida CA: <b>{{ meter.ac_vo }} V</b></li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <h6 class="text-secondary">Mediciones de DC</h6>
+          <div class="row">
+            <div class="col">
+              <ul class="list-unstyled">
+                <li><b>Panel Este (DC1):</b></li>
+                <li>Corriente: <b>{{ meter.dc1_a }} A</b></li>
+                <li>Potencia: <b>{{ meter.dc1_pw | customUnitPowerEnergyHours }}</b></li>
+                <li>Voltaje: <b>{{ meter.dc1_v }} V</b></li>
+              </ul>
+            </div>
+            <div class="col">
+              <ul class="list-unstyled">
+                <li><b>Panel Oeste (DC2):</b></li>
+                <li>Corriente: <b>{{ meter.dc2_a }} A</b></li>
+                <li>Potencia: <b>{{ meter.dc2_pw | customUnitPowerEnergyHours }}</b></li>
+                <li>Voltaje: <b>{{ meter.dc2_v }} V</b></li>
+              </ul>
+            </div>
+          </div>
+          <ul class="list-unstyled">
+            <li>Potencia Total DC: <b>{{ meter.dc_pw | customUnitPowerEnergyHours }}</b></li>
+          </ul>
+        </div>
+
+        <div class="col-md-4">
+          <h6 class="text-secondary">Red y Eficiencia</h6>
+          <ul class="list-unstyled">
+            <li>Salida de Potencia Reactiva: <b>{{ meter.rea_pw_o }} VAR</b></li>
+            <li>Potencia Reactiva de Red: <b>{{ meter.grid_reapw }} VAR</b></li>
+            <li>Voltaje de Red: <b>{{ meter.grid_v }} V</b></li>
+            <li>Corriente de Red: <b>{{ meter.grid_a }} A</b></li>
+            <li>Frecuencia: <b>{{ meter.freq_o }} Hz</b></li>
+            <li>Eficiencia: <b>{{ meter.ef }} %</b></li>
+            <li>Factor de Potencia de Salida: <b>{{ meter.factpw_o }}</b></li>
+          </ul>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <h6 class="text-secondary">Finanzas</h6>
+          <ul class="list-unstyled">
+            <li>Precio del Excedente: <b [ngClass]="{'text-danger': meter.precio_exced < 0, 'text-success': meter.precio_exced > 0}">{{ meter.precio_exced }}€</b></li>
+            <li>Precio PVPC: <b>{{ meter.precio_pvpc | customCurrency}}</b></li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <h6 class="text-secondary">Estadísticas de Energía</h6>
+          <ul class="list-unstyled">
+            <li>Energía Importada: <b>{{ meter.energ_imp | customUnitPowerEnergyHours: 'kWh' }}</b></li>
+            <li>Energía Exportada: <b>{{ meter.energ_exp | customUnitPowerEnergyHours: 'kWh'}}</b></li>
+          </ul>
+          <ul class="list-unstyled">
+            <li>Potencia Activa de Red: <b>{{ meter.grid_actpw | customUnitPowerEnergyHours}}</b></li>
+            <li>Potencia Exportada a Red: <b>{{ meter.grid_exp_pw | customUnitPowerEnergyHours}}</b></li>
+            <li>Potencia Importada de Red: <b>{{ meter.grid_imp_pw | customUnitPowerEnergyHours}}</b></li>
+            <li>Medidor Energía Hogar: <b>{{ meter.state_m === 1 ? 'Activo' : 'Desactivado' }}</b></li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+
+          <h6 class="text-secondary">Temperatura del Inversor</h6>
+          <div style="position:relative;left:-23%">
+            <app-gauge-chart meterId="temp"
+                             [meterScale]="[5,0,80]"
+                             units="ºC"
+                             scaleKey="TEMP"
+                             title=""></app-gauge-chart>
+          </div>
+
+        </div>
+      </div>
+      <p class="card-text"><small class="text-muted">Última Actualización {{ meter.date | localTime }}</small></p>
+    </div>
+  </div>
+</ng-container>
+
+
+
+<div class="card mb-3">
+  <div class="card-header" style="background: linear-gradient(135deg, #007bff, #0056b3); color: white;">
+    <h5 class="my-0 font-weight-bold"><i class="bi bi-lightning-charge"></i> Medidores de Energía</h5>
+  </div>
+  <div class="card-body">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <h5 class="card-title mb-0"></h5>
+              <i class="bi bi-info-circle" data-bs-toggle="tooltip" data-bs-placement="right" [attr.title]="tooltipTexts.tensionRedElectrica"></i>
+            </div>
+            <app-gauge-chart meterId="grid_v"
+                             [meterScale]="[30,0,300]"
+                             units="V"
+                             scaleKey="GRID_V"
+                             title="Tensión de la Red Eléctrica"></app-gauge-chart>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <h5 class="card-title mb-0"></h5>
+              <i class="bi bi-info-circle" data-bs-toggle="tooltip" data-bs-placement="right" [attr.title]="tooltipTexts.consumoRedElectrica"></i>
+            </div>
+
+            <app-gauge-chart meterId="grid_actpw"
+                             units="W"
+                             title="Consumo de la Red Eléctrica"
+                             scaleKey="POWER_IO"
+                             [meterScale]="[1000,-6000,6000]"></app-gauge-chart>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <h5 class="card-title mb-0"></h5>
+              <i class="bi bi-info-circle" data-bs-toggle="tooltip" data-bs-placement="right" [attr.title]="tooltipTexts.temperaturaInversor"></i>
+            </div>
+            <app-gauge-chart meterId="consu_pw"
+                             units="W"
+                             title="Consumo de Energía en el Hogar"
+                             scaleKey="CONSUM"
+                             [meterScale]="[500,0,7000]"></app-gauge-chart>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <h5 class="card-title mb-0"></h5>
+              <i class="bi bi-info-circle" data-bs-toggle="tooltip" data-bs-placement="right" [attr.title]="tooltipTexts.produccionEnergiaEste"></i>
+            </div>
+            <app-gauge-chart meterId="dc1_pw"
+                             scaleKey="POWER"
+                             [meterScale]="[500,0,4000]"
+                             units="W"
+                             title="Producción de Energía - Panel Este"></app-gauge-chart>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <h5 class="card-title mb-0"></h5>
+              <i class="bi bi-info-circle" data-bs-toggle="tooltip" data-bs-placement="right" [attr.title]="tooltipTexts.produccionEnergiaOeste"></i>
+            </div>
+            <app-gauge-chart meterId="dc2_pw"
+                             scaleKey="POWER"
+                             [meterScale]="[500,0,4000]"
+                             units="W"
+                             title="Producción de Energía - Panel Oeste"></app-gauge-chart>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <h5 class="card-title mb-0"></h5>
+              <i class="bi bi-info-circle" data-bs-toggle="tooltip" data-bs-placement="right" [attr.title]="tooltipTexts.potenciaGenerada"></i>
+            </div>
+            <app-gauge-chart meterId="pe_pw"
+                             scaleKey="PE_PW"
+                             [meterScale]="[500,0,6000]"
+                             units="kW"
+                             title="Potencia Generada"></app-gauge-chart>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <small *ngFor="let meter of meters" class="text-muted mt-3">Última Actualización: {{ meter.date | localTime }}</small>
+  </div>
+
+</div>

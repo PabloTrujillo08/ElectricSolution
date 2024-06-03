@@ -1,0 +1,457 @@
+<div class="login-container">
+
+  <div class="card mb-5">
+    <div class="card-header" style="background: linear-gradient(135deg, #007bff, #0056b3); color: white;">
+      <h5 class="my-0 font-weight-bold"><i class="bi bi-file-earmark-text"></i> Detalles del Contrato</h5>
+    </div>
+    <ul class="breadcrumb">
+      <li [class.active]="currentStep === 1" [class.completed]="currentStep > 1" (click)="setStep(1)">
+        <i class="bi bi-geo-alt"></i> Dirección del Suministro
+      </li>
+      <li [class.active]="currentStep === 2" [class.completed]="currentStep > 2" (click)="setStep(2)">
+        <i class="bi bi-file-earmark-text"></i> Contrato
+      </li>
+      <li *ngIf="contractForm.get('contractInfo.hasSolarPanels')?.value" [class.active]="currentStep === 3" [class.completed]="currentStep > 3" (click)="setStep(3)">
+        <i class="bi bi-sun"></i> Instalación Solar
+      </li>
+      <li [class.active]="currentStep === 4" [class.completed]="currentStep > 4" (click)="setStep(4)">
+        <i class="bi bi-credit-card"></i> Datos de Facturación
+      </li>
+      <li [class.active]="currentStep === 5" [class.completed]="currentStep > 5" (click)="setStep(5)">
+        <i class="bi bi-check2-square"></i> Resumen
+      </li>
+    </ul>
+    <form [formGroup]="contractForm" (ngSubmit)="RegisterContractClient()" class="p-4">
+
+
+      <ng-container *ngIf="currentStep === 1">
+        <h2 class="mb-4">Dirección del Suministro</h2>
+        <div formGroupName="addressInfo">
+          <div class="row">
+            <!-- Street -->
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label for="Street" class="d-flex mt-3">Calle</label>
+                <input type="text" id="Street" formControlName="street" class="form-control">
+                <div *ngIf="contractForm.get('addressInfo')?.get('street')?.errors?.['required'] && (contractForm.get('addressInfo')?.get('street')?.touched)">
+                  <div class="alert alert-danger">
+                    La calle es obligatoria.
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Door Number -->
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label for="DoorNumber" class="d-flex mt-3">Número</label>
+                <input type="text" id="DoorNumber" formControlName="doorNumber" class="form-control">
+                <div *ngIf="contractForm.get('addressInfo')?.get('doorNumber')?.errors?.['required'] && (contractForm.get('addressInfo')?.get('doorNumber')?.touched)">
+                  <div class="alert alert-danger">
+                    El número es obligatorio.
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Province -->
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label for="Province" class="d-flex mt-3">Provincia</label>
+                <select id="Province" formControlName="provinceId" class="form-select">
+                  <option value="" disabled selected>Selecciona una provincia</option>
+                  <option *ngFor="let province of Provinces" [value]="province.id">{{ province.name }}</option>
+                </select>
+                <div *ngIf="contractForm.get('addressInfo')?.get('provinceId')?.errors?.['required'] && (contractForm.get('addressInfo')?.get('provinceId')?.touched)">
+                  <div class="alert alert-danger">
+                    La provincia es obligatoria.
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- City -->
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label for="City" class="d-flex mt-3">Ciudad</label>
+                <input type="text" id="City" formControlName="city" class="form-control">
+                <div *ngIf="contractForm.get('addressInfo')?.get('city')?.errors?.['required'] && (contractForm.get('addressInfo')?.get('city')?.touched)">
+                  <div class="alert alert-danger">
+                    La ciudad es obligatoria.
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Zip Code -->
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label for="ZipCode" class="d-flex mt-3">Código Postal</label>
+                <input type="text" id="ZipCode" formControlName="zipCode" class="form-control" maxlength="5" (keypress)="validateNumber($event)">
+                <div *ngIf="contractForm.get('addressInfo')?.get('zipCode')?.errors?.['required'] && (contractForm.get('addressInfo')?.get('zipCode')?.touched)">
+                  <div class="alert alert-danger mt-1">
+                    El código postal es obligatorio.
+                  </div>
+                </div>
+                <div *ngIf="contractForm.get('addressInfo')?.get('zipCode')?.errors?.['pattern'] && (contractForm.get('addressInfo')?.get('zipCode')?.touched)">
+                  <div class="alert alert-warning mt-1">
+                    El código postal no es válido.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-sm-6"></div>
+            <div class="col-sm-6">
+              <button type="button" class="btn btn-primary mr-2" (click)="nextStep()" [disabled]="!contractForm.get('addressInfo')?.valid">Siguiente</button>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <div *ngIf="currentStep === 2" class="form-group" formGroupName="contractInfo">
+        <h2 class="mb-4">Contrato</h2>
+        <div>
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="form-group row align-items-center">
+                <label for="powerContracted" class="col-4">Potencia a Contratar</label>
+                <div class="col-sm-3">
+                  <select id="powerContracted" name="powerContracted" class="form-select" required formControlName="powerContracted">
+                    <option value="" disabled selected>Selecciona la potencia a contratar</option>
+                    <option *ngFor="let availablePower of AvailablePowers" [value]="availablePower.value">{{ availablePower.description }}</option>
+                  </select>
+                </div>
+                <div *ngIf="contractForm.get('contractInfo')?.get('powerContracted')?.errors?.['required'] && contractForm?.get('contractInfo')?.get('powerContracted')?.touched">
+                  <div class="alert alert-danger">
+                    Debes seleccionar una potencia a contratar.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-sm-12">
+              <div class="form-group row align-items-center mt-3">
+                <label for="Tariff" class="col-4">Tarifa</label>
+                <div class="col-auto">
+                  <select id="Tariff" name="Tariff" class="form-select mb-2" required formControlName="tariff" (ngModelChange)="updateSelectedTariffDescription()">
+                    <option *ngFor="let tariff of Tariffs" [ngValue]="tariff" [disabled]="tariff.id === null">{{ tariff.name }}</option>
+                  </select>
+                </div>
+                <div *ngIf="contractForm.get('contractInfo')?.get('tariff')?.errors?.['required'] && contractForm.get('contractInfo')?.get('tariff')?.touched">
+                  <div class="alert alert-danger">
+                    Debes seleccionar una tarifa.
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="selectedTariffRates" class="mt-3">
+              <h3>
+                {{selectedTariffDescription}}
+
+              </h3>
+              <table *ngIf="selectedTariffRates.length > 0" class="table table-striped table-sm table-center">
+                <thead>
+                  <tr>
+                    <th>Descripción</th>
+                    <th>Costo por KWh</th>
+                    <th>Hora de Inicio</th>
+                    <th>Hora de Fin</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let rate of selectedTariffRates">
+                    <td>{{ rate.description }}</td>
+                    <td>{{ rate.costPerKWh | customCurrency}}</td>
+                    <td>{{ rate.startTime }}</td>
+                    <td>{{ rate.endTime }}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <app-bar-chart *ngIf="selectedTariffRates.length > 0"
+                             _title="PRECIO REFERENCIA TIEMPO REAL MERCADO REGULADO"
+                             [customValues]="calculateTariffValues()"></app-bar-chart>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="form-group row align-items-center mt-3">
+              <label class="col-4">¿Contador en Propiedad?</label>
+              <div class="col-auto">
+                <div class="col-auto">
+                  <div class="btn-group" role="group" aria-label="Toggle button group">
+                    <!-- Botón "NO" -->
+                    <input type="radio" class="btn-check" id="OwnMeterNo" name="ownMeter"
+                           formControlName="ownMeter" [value]="false" autocomplete="off">
+                    <label class="btn btn-outline-primary btn-sm" for="OwnMeterNo">NO</label>
+
+                    <!-- Botón "SI" -->
+                    <input type="radio" class="btn-check" id="OwnMeterYes" name="ownMeter"
+                           formControlName="ownMeter" [value]="true" autocomplete="off">
+                    <label class="btn btn-outline-primary btn-sm" for="OwnMeterYes">SI</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row align-items-center mt-3">
+          <label class="col-4">¿Tiene paneles solares?</label>
+          <div class="col-auto">
+            <div class="btn-group" role="group" aria-label="Toggle button group">
+              <!-- Botón "NO" -->
+              <input type="radio" class="btn-check" name="hasSolarPanels" id="HasSolarPanelsNo"
+                     formControlName="hasSolarPanels" [value]="false" autocomplete="off">
+              <label class="btn btn-outline-primary btn-sm" for="HasSolarPanelsNo">NO</label>
+
+              <!-- Botón "SI" -->
+              <input type="radio" class="btn-check" name="hasSolarPanels" id="HasSolarPanelsYes"
+                     formControlName="hasSolarPanels" [value]="true" autocomplete="off">
+              <label class="btn btn-outline-primary btn-sm" for="HasSolarPanelsYes">SI</label>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-sm-6">
+          </div>
+          <div class="col-sm-6">
+            <button type="button" class="btn btn-anterior " (click)="prevStep()">Anterior</button>
+            <button type="button" class="btn btn-primary mr-2" (click)="nextStep()" [disabled]="!contractForm.get('contractInfo')?.valid">Siguiente</button>
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+      <div *ngIf="currentStep === 3 && hasSolarPanels" class="form-group" formGroupName="solarInstallation">
+        <h2 class="mb-4">Instalación Solar</h2>
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="form-group row align-items-center">
+              <label for="capacity" class="col-4">Potencia de Instalación</label>
+              <div class="col-auto">
+                <select id="capacity" name="capacity" class="form-select" required formControlName="capacity">
+                  <option value="" disabled selected>Selecciona la potencia</option>
+                  <option *ngFor="let availablePower of AvailablePowers" [value]="availablePower.value">{{ availablePower.description }}</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group row align-items-center mt-3">
+              <label for="inverterModel" class="col-4">Inversor Instalado</label>
+              <div class="col-auto">
+                <select id="inverterModel" name="inverterModel" class="form-select" required formControlName="inverterModel">
+                  <option value="" disabled selected>Selecciona el modelo</option>
+                  <option *ngFor="let availableInverterModel of AvailableInverterModels" [value]="availableInverterModel.value">{{ availableInverterModel.description }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+
+
+        <div class="form-group row align-items-center mt-3">
+          <label class="col-4">¿Tiene batería?</label>
+          <div class="col-auto">
+            <div class="btn-group col-md-3" role="group" aria-label="Toggle button group">
+              <input type="radio" class="btn-check" id="HasBatteryNo" name="battery" formControlName="battery" [value]="false" autocomplete="off">
+              <label class="btn btn-outline-primary btn-sm" for="HasBatteryNo">NO</label>
+              <input type="radio" class="btn-check" id="HasBatteryYes" name="battery" formControlName="battery" [value]="true" autocomplete="off">
+              <label class="btn btn-outline-primary btn-sm" for="HasBatteryYes">SI</label>
+            </div>
+          </div>
+        </div>
+
+
+
+
+        <div *ngIf="contractForm.get('solarInstallation')?.get('battery')?.value" class="col-sm-12">
+          <div class="form-group row align-items-center mt-3">
+            <label for="capacityBattery" class="col-4">Capacidad de Batería</label>
+            <div class="col-auto">
+              <select id="capacityBattery" name="capacityBattery" class="form-select" required formControlName="capacityBattery">
+                <option value="" disabled selected>Selecciona la capacidad</option>
+                <option *ngFor="let availablePower of AvailablePowers" [value]="availablePower.value">{{ availablePower.description }}</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group row align-items-center mt-3">
+            <label for="modelBattery" class="col-4">Modelo de Batería</label>
+            <div class="col-auto">
+              <select id="modelBattery" name="modelBattery" class="form-select" required formControlName="modelBattery">
+                <option value="" disabled selected>Selecciona el modelo</option>
+                <option *ngFor="let availableBatteryModel of AvailableBatteryModels" [value]="availableBatteryModel.value">{{ availableBatteryModel.description }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="form-group row align-items-center mt-3">
+              <label class="col-4">¿Está inyectando?</label>
+              <div class="col-auto">
+                <div class="btn-group" role="group" aria-label="Toggle button group">
+                  <input type="radio" class="btn-check" id="InjectionNo" name="injection" formControlName="injection" [value]="false" autocomplete="off">
+                  <label class="btn btn-outline-primary btn-sm" for="InjectionNo">NO</label>
+                  <input type="radio" class="btn-check" id="InjectionYes" name="injection" formControlName="injection" [value]="true" autocomplete="off">
+                  <label class="btn btn-outline-primary btn-sm" for="InjectionYes">SI</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="contractForm.get('solarInstallation')?.get('injection')?.value" class="mt-3">
+            <app-bar-chart _title="PRECIO EN TIEMPO REAL MERCADO REGULADO"
+                           [_sale]="true"
+                           [_buy]="true">
+            </app-bar-chart>
+          </div>
+
+        </div>
+        <div class="row mt-3">
+          <div class="col-sm-6">
+          </div>
+          <div class="col-sm-6 mt-5">
+            <button type="button" class="btn btn-anterior" (click)="prevStep()">Anterior</button>
+            <button type="button" class="btn btn-primary mr-2" (click)="nextStep()" [disabled]="!contractForm.get('solarInstallation')?.valid">Siguiente</button>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="currentStep === 4" class="form-group" formGroupName="billingInfo">
+        <h2 class="mb-4">Datos de Facturación</h2>
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="form-group row align-items-center">
+              <label for="BankAccount" class="col-4">Numero de Cuenta</label>
+              <div class="col-md-6">
+                <input type="text" id="BankAccount" name="BankAccount" class="form-control" required formControlName="bankAccount" (input)="handleIbanInput($event)">
+                <div *ngIf="contractForm?.get('billingInfo.bankAccount')?.touched">
+                  <!-- Mensaje de campo obligatorio -->
+                  <div *ngIf="contractForm?.get('billingInfo.bankAccount')?.errors?.['required']" class="alert alert-warning">
+                    Este campo es obligatorio.
+                  </div>
+
+                  <!-- Mensaje para formato de IBAN no válido -->
+                  <div *ngIf="contractForm?.get('billingInfo.bankAccount')?.errors?.['invalidIban']" class="alert alert-warning">
+                    Formato de IBAN no válido.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-12">
+            <div class="form-group row align-items-center mt-3">
+              <label for="StartDate" class="col-4">Fecha de alta</label>
+              <div class="col-md-6">
+                <input type="date" id="StartDate" name="StartDate" class="form-control"
+                       required formControlName="startDate" [min]="getTodayDate()">
+
+                <div *ngIf="contractForm?.get('billingInfo.startDate')?.errors?.['weekday']" class="alert alert-warning">
+
+                  <div [innerHTML]="contractForm.get('billingInfo.startDate')?.errors?.['weekday']"></div>
+                </div>
+                <div *ngIf="contractForm?.get('billingInfo.startDate')?.errors?.['required']" class="alert alert-warning">
+                  Este campo es obligatorio.
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="col-sm-12">
+            <div class="form-group row align-items-center mt-3">
+              <label class="col-4">Emitir factura al domicilio fiscal</label>
+              <div class="col-auto">
+                <div class="btn-group" role="group" aria-label="Toggle button group">
+                  <input type="radio" class="btn-check" id="fiscalAddressNo" name="fiscalAddress" formControlName="fiscalAddress" [value]="false" autocomplete="off">
+                  <label class="btn btn-outline-primary btn-sm" for="fiscalAddressNo">NO</label>
+                  <input type="radio" class="btn-check" id="fiscalAddressYes" name="fiscalAddress" formControlName="fiscalAddress" [value]="true" autocomplete="off">
+                  <label class="btn btn-outline-primary btn-sm" for="fiscalAddressYes">SI</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-sm-6">
+          </div>
+          <div class="col-sm-6">
+            <button type="button" class="btn btn-anterior " (click)="prevStep()">Anterior</button>
+            <button type="button" class="btn btn-primary mr-2" (click)="nextStep()" [disabled]="!contractForm.get('billingInfo')?.valid">Siguiente</button>
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+      <div *ngIf="currentStep === 5" class="confirmation-container d-flex flex-column">
+        <section class="section about-section gray-bg" id="about">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="about-text go-to">
+                  <h3 class="dark-color">Resumen</h3>
+                  <h6 class="theme-color lead">Revise los datos de su nuevo Contrato</h6>
+                  <p>Gracias por contratar con Calambre Energy. Su contrato está listo para ser enviado a nuestro sistema.</p>
+                  <div class="row about-list">
+                    <div class="col-md-5">
+                      <div class="media">
+                        <h5>Dirección del Suministro</h5>
+                        <p>{{contractForm.get('addressInfo')?.get('street')?.value}}, {{contractForm.get('addressInfo')?.get('doorNumber')?.value}}, {{contractForm.get('addressInfo')?.get('zipCode')?.value}}</p>
+                        <p>{{contractForm.get('addressInfo')?.get('city')?.value}}, {{ getProvinceName(contractForm.get('addressInfo')?.get('provinceId')?.value) }}</p>
+                      </div>
+                    </div>
+                    <div class="col-md-7">
+                      <ng-container *ngIf="contractForm.get('contractInfo')?.get('hasSolarPanels')?.value">
+                        <h5>Detalles de la Instalación Solar</h5>
+                        <p> La potencia de la instalación es de {{contractForm.get('solarInstallation')?.get('capacity')?.value | customUnitPowerEnergyHours}}, equipada con un inversor de modelo {{contractForm.get('solarInstallation')?.get('inverterModel')?.value}}. Además, la instalación solar cuenta con una batería, utilizando el modelo {{contractForm.get('solarInstallation')?.get('modelBattery')?.value}}, la cual tiene una capacidad de {{contractForm.get('solarInstallation')?.get('capacityBattery')?.value | customUnitPowerEnergyHours}}. Finalmente, la instalación solar {{contractForm.get('solarInstallation')?.get('injection')?.value ? 'realizará' : 'no realizará'}} inyección a la red eléctrica.</p>
+                      </ng-container>
+                    </div>
+                    <div class="col-md-12 mt-3">
+                      <h5>Contrato</h5>
+                      <p>El contrato incluye una potencia contratada de {{contractForm.get('contractInfo')?.get('powerContracted')?.value | customUnitPowerEnergyHours}} y opera bajo la tarifa {{ contractForm.get('contractInfo')?.get('tariff.name')?.value || '(debe seleccionar una)' }}, con el contador {{contractForm.get('contractInfo')?.get('ownMeter')?.value ? 'en propiedad' : 'en alquiler'}}. Además, {{contractForm.get('contractInfo')?.get('hasSolarPanels')?.value ? '' : 'no'}} se ha optado por la instalación de paneles solares.</p>
+                    </div>
+                    <div class="col-md-12 mt-3">
+                      <h5>Datos de facturación</h5>
+                      <p>El número de cuenta asociado al contrato es {{contractForm.get('billingInfo')?.get('bankAccount')?.value}}.</p>
+                      <p>La fecha de alta del contrato es {{contractForm.get('billingInfo')?.get('startDate')?.value}}.</p>
+                      <p>Las facturas {{contractForm.get('billingInfo')?.get('fiscalAddress')?.value ? '' : 'no'}} se emitirán al domicilio fiscal.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <div class="row mt-4">
+          <div class="col-sm-6">
+          </div>
+          <div class="col-sm-6">
+            <button type="button" class="btn btn-anterior" (click)="prevStep()">Anterior</button>
+            <button type="submit" class="btn btn-success mr-2" [disabled]="!validateForm() || isButtonDisabled">Solicitar</button>
+          </div>
+        </div>
+        <div *ngIf="statusMessage" [ngClass]="{'alert-success': isSuccess, 'alert-danger': !isSuccess}" class="alert mt-3">
+          <span>{{ statusMessage }}</span>
+        </div>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+

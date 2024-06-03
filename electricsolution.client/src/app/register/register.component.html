@@ -1,0 +1,197 @@
+<div class="login-container mt-5">
+
+  <div class="card mb-3">
+    <div class="card">
+      <div class="card-header" style="background: linear-gradient(135deg, #007bff, #0056b3); color: white;">
+        <h5 class="my-0 font-weight-bold"><i class="bi bi-person-plus"></i> Registro de Usuario</h5>
+      </div>
+      <ul class="breadcrumb">
+        <li [class.active]="currentStep === 1" [class.completed]="currentStep > 1" (click)="setStep(1)">
+          <i class="bi bi-file-earmark-person"></i> Datos Personales
+        </li>
+        <li [class.active]="currentStep === 2" [class.completed]="currentStep > 2" (click)="setStep(2)">
+          <i class="bi bi-person"></i> Datos de la Cuenta
+        </li>
+        <li [class.active]="currentStep === 3" [class.completed]="currentStep > 3" (click)="setStep(3)">
+          <i class="bi bi-geo-alt"></i> Dirección de Facturación
+        </li>
+        <li [class.active]="currentStep === 4" [class.completed]="currentStep > 4" (click)="setStep(4)">
+          <i class="bi bi-check2-square"></i> Resumen
+        </li>
+      </ul>
+      <form (ngSubmit)="register()" class="p-4">
+
+        <div *ngIf="currentStep === 1" class="form-group">
+          <h2 class="mb-4">Datos Personales</h2>
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label for="Name" class="d-flex">Nombre</label>
+                <input type="text" id="Name" [(ngModel)]="Name" name="Name" class="form-control" required>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label for="LastName" class="d-flex">Apellido</label>
+                <input type="text" id="LastName" [(ngModel)]="LastName" name="LastName" class="form-control" required>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label for="vat" class="d-flex mt-3">DNI</label>
+                <input type="text" id="vat" [(ngModel)]="vat" name="vat" class="form-control" required>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label for="birthDate" class="d-flex mt-3">Fecha de nacimiento</label>
+                <input type="date" id="birthDate" [(ngModel)]="birthDate" name="birthDate" class="form-control" required>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label for="PhoneNumber" class="d-flex mt-3">Teléfono</label>
+                <input type="text" id="PhoneNumber" [(ngModel)]="PhoneNumber" name="PhoneNumber" class="form-control" required>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-6">
+            </div>
+            <div class="col-sm-6">
+              <button type="button" class="btn btn-primary mr-2" (click)="nextStep()">Siguiente</button>
+              <a class="w-100 btn-inicio" routerLink="/login">Volver a inicio de sesión</a>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="currentStep === 2" class="form-group">
+          <h2 class="mb-4">Datos de la Cuenta</h2>
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label for="UserName" class="d-flex">Nombre de Usuario</label>
+                <input type="text" id="UserName" [(ngModel)]="UserName" name="UserName" class="form-control" required>
+              </div>
+            </div>
+            <div class="col-sm-6"></div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label for="email" class="d-flex mt-3">Email</label>
+                <input type="email" id="email" [(ngModel)]="email" name="email" class="form-control" required>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label for="confirmEmail" class="d-flex mt-3">Confirmar email</label>
+                <input type="email" id="confirmEmail" name="confirmEmail" [(ngModel)]="confirmEmail" class="form-control" required>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label for="password" class="d-flex mt-3">Contraseña</label>
+                <input type="password" id="password" [(ngModel)]="password" name="password" class="form-control" required>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label for="password" class="d-flex mt-3">Confirmar contraseña</label>
+                <input type="password" id="password" [(ngModel)]="password" name="password" class="form-control" required>
+              </div>
+            </div>
+
+          </div>
+          <div class="row">
+            <div class="col-sm-6">
+            </div>
+            <div class="col-sm-6">
+              <button type="button" class="btn btn-anterior" (click)="prevStep()">Anterior</button>
+              <button type="button" class="btn btn-primary mr-2" (click)="nextStep()">Siguiente</button>
+              <a class="w-100 btn-inicio" routerLink="/login">Volver a inicio de sesión</a>
+            </div>
+          </div>
+        </div>
+
+
+        <div *ngIf="currentStep === 3" class="form-group">
+          <h2 class="mb-4">Dirección de Facturación</h2>
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="form-group d-flex flex-column align-items-start">
+                <label for="Address">Dirección</label>
+                <input type="text" id="Address" [(ngModel)]="Address" name="Address" class="form-control" required>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group d-flex flex-column align-items-start">
+                <label for="doorNumber" class="ml-2">Puerta</label>
+                <input type="text" id="DoorNumber" [(ngModel)]="DoorNumber" name="DoorNumber" class="form-control" required>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label for="Province" class="mt-3">Ciudad</label>
+                <select id="Province" name="Province" class="form-control" required [(ngModel)]="Province">
+                  <option value="" disabled selected>Selecciona una ciudad</option>
+                  <option *ngFor="let province of Provinces" [value]="province.id">{{ province.name }}</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label for="ZipCode" class="mt-3">Código Postal</label>
+                <input type="text" id="ZipCode" [(ngModel)]="ZipCode" name="ZipCode" class="form-control" required>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-6">
+            </div>
+            <div class="col-sm-6">
+              <button type="button" class="btn btn-anterior" (click)="prevStep()">Anterior</button>
+              <button type="button" class="btn btn-primary mr-2" (click)="nextStep()">Siguiente</button>
+              <a class="w-100 btn-inicio" routerLink="/login">Volver a inicio de sesión</a>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="currentStep === 4">
+          <h2 class="mb-4">Resumen</h2>
+          <p><strong>Paso 1: Datos Personales</strong></p>
+          <p>Nombre: {{ Name }} {{ LastName }}</p>
+          <p>DNI: {{ vat }}</p>
+          <p>Fecha de Nacimiento: {{ birthDate ? formatDate(birthDate) : 'Fecha no especificada' }}</p>
+          <hr>
+
+          <p><strong>Paso 2: Datos de la Cuenta</strong></p>
+          <p>Email: {{ email }}</p>
+          <p>Nombre de Usuario: {{ UserName }}</p>
+          <hr>
+
+          <p><strong>Paso 3: Dirección de Facturación</strong></p>
+          <p>Dirección: {{ Address }}</p>
+          <p>Puerta: {{ DoorNumber }}</p>
+          <p>Ciudad: {{ City }}</p>
+          <p>Código Postal: {{ ZipCode }}</p>
+
+
+          <div class="row">
+            <div class="col-sm-6">
+            </div>
+            <div class="col-sm-6">
+              <button type="button" class="btn btn-anterior" (click)="prevStep()">Anterior</button>
+              <button type="submit" class="btn btn-success mr-2">Guardar</button>
+              <a class="w-100 btn-inicio" routerLink="/login">Volver a inicio de sesión</a>
+            </div>
+          </div>
+          <div *ngIf="errorMessage || mailError" class="alert alert-danger mt-3">
+            <span *ngIf="mailError">{{ errorMessage }}</span>
+          </div>
+
+        </div>
+      </form>
+    </div>
+    </div>
+  </div>

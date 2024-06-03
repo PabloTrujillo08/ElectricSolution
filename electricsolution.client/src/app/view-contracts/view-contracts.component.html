@@ -1,0 +1,305 @@
+<div class="card mb-3">
+  <div class="card-header" style="background: linear-gradient(135deg, #007bff, #0056b3); color: white;">
+    <h5 class="my-0 font-weight-bold"><i class="bi bi-file-earmark-text"></i> Mis Contratos</h5>
+  </div>
+  <div class="card-body">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Contrato</th>
+          <th scope="col">CUP</th>
+          <th scope="col">Dirección Suministro</th>
+          <th scope="col">Fecha Inicio</th>
+          <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let item of items | paginate:{itemsPerPage:itemsPerPage, currentPage: pageActualContract, id: 'first'}; let i = index">
+          <tr>
+            <th scope="row" (click)="toggleAccordion(i)">{{ i + 1 }}</th>
+            <td (click)="toggleAccordion(i)">{{ item.contractNumber }}</td>
+            <td (click)="toggleAccordion(i)">{{ item.cup }}</td>
+            <td (click)="toggleAccordion(i)">{{ item.address }}</td>
+            <td (click)="toggleAccordion(i)">{{ item.startDate | date:'dd/MM/yyyy' }}</td>
+            <td>
+              <!-- Contenedor para los botones -->
+              <div class="d-flex align-items-center">
+                <!-- Menú desplegable con rueda dentada -->
+                <div class="dropdown">
+                  <button class="btn btn-outline-primary dropdown-toggle" type="button"
+                          id="dropdownMenuButton{{i}}"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false">
+                    <i class="bi bi-gear-fill"></i>
+                    <span *ngIf="countNotifications(item.invoices, item.notifications) > 0" class="badge bg-danger">
+                      {{ countNotifications(item.invoices,item.notifications) }}
+                    </span>
+                  </button>
+
+                  <ul class="dropdown-menu" [attr.aria-labelledby]="'dropdownMenuButton' + i">
+                    <li>
+                      <button class="dropdown-item" (click)="activateTab(i, 1)">
+                        <i class="bi bi-bell-fill"></i>
+                        Notificaciones
+                      </button>
+                    </li>
+                    <li>
+                      <button class="dropdown-item" (click)="activateTab(i, 2)">
+                        <i class="bi bi-toggles2"></i>
+                        Instalación
+                      </button>
+                    </li>
+                    <li>
+                    <li>
+                      <button class="dropdown-item" (click)="activateTab(i, 3)">
+                        <i class="bi bi-bar-chart"></i>
+                        Tarifa
+                      </button>
+                    </li>
+                    <li>
+                      <button class="dropdown-item" (click)="activateTab(i, 4)">
+                        <i class="bi bi-file-earmark-text"></i>
+                        Facturas
+                      </button>
+                    </li>
+                    <li>
+                      <button class="dropdown-item" (click)="activateTab(i, 5)" *ngIf="item.solarCapacity">
+                        <i class="bi bi-sun"></i>
+                        Paneles Solares
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+
+                <button class="btn btn-outline-warning ms-2" title="Haga clic para ver sus medidores" [routerLink]="['/measurements']">
+                  <i class="bi bi-info-circle"></i>
+                </button>
+              </div>
+            </td>
+
+          </tr>
+          <tr [class.d-none]="activeIndex !== i">
+            <td colspan="7">
+              <div class="accordion-detail" [ngClass]="{'show': activeIndex === i}">
+
+                <div class="tabs">
+                  <input type="radio" id="tab1{{i}}" name="tab-control">
+                  <input type="radio" id="tab2{{i}}" name="tab-control">
+                  <input type="radio" id="tab3{{i}}" name="tab-control">
+                  <input type="radio" id="tab4{{i}}" name="tab-control">
+                  <input type="radio" id="tab5{{i}}" name="tab-control" [disabled]="!item.solarCapacity">
+
+                  <ul>
+                    <li>
+                      <label for="tab1{{i}}" role="button">
+                        <br><span>Notificaciones</span>
+                        <span *ngIf="getUnreadCount(item.notifications) > 0" class="badge bg-danger">{{ getUnreadCount(item.notifications) }}</span>
+                      </label>
+                    </li>
+                    <li>
+                      <label for="tab2{{i}}" role="button">
+                        <br><span>Detalles</span>
+                      </label>
+                    </li>
+                    <li>
+                      <label for="tab3{{i}}" role="button">
+                        <br><span>Mi Tarifa</span>
+                      </label>
+                    </li>
+                    <li>
+                      <label for="tab4{{i}}" role="button">
+                        <br>
+                        <span>Facturas</span>
+                        <span *ngIf="getNotificationInvoiceCount(item.invoices) > 0" class="badge bg-danger">
+                          {{ getNotificationInvoiceCount(item.invoices) }}
+                        </span>
+                      </label>
+                    </li>
+
+                    <li>
+                      <label for="tab5{{i}}" role="button">
+                        <br><span *ngIf="item.solarCapacity">Paneles Solares</span>
+                      </label>
+                    </li>
+                  </ul>
+
+                  <div class="slider"><div class="indicator"></div></div>
+                  <div class="content">
+                    <section>
+                      <div class="card mb-3">
+                        <div class="card-header bg-primary text-white">
+                          Notificaciones
+                        </div>
+                        <div class="card-body">
+                          <div class="p-2">
+                            <table class="table table-striped">
+                              <thead>
+                                <tr>
+                                  <th scope="col">#</th>
+                                  <th scope="col">Fecha de Envío</th>
+                                  <th scope="col">Mensaje</th>
+                                  <th scope="col">Leída</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let notification of item.notifications; let idx = index">
+                                  <th scope="row">{{ idx + 1 }}</th>
+                                  <td>{{ notification.sentDate | date:'dd/MM/yyyy' }}</td>
+                                  <td>{{ notification.message }}</td>
+                                  <td *ngIf="notification.read">
+                                    Sí
+                                  </td>
+                                  <td *ngIf="!notification.read">
+                                    <button class="btn btn-sm btn-warning" (click)="markAsRead(notification.id.toString(), i)">Marcar como leída</button>
+                                  </td>
+
+
+                                </tr>
+                              </tbody>
+                            </table>
+
+                          </div>
+                        </div>
+                      </div>
+                    </section>
+                    <section>
+                      <div class="card mb-3">
+                        <div class="card-header bg-primary text-white">
+                          Detalles del Contrato
+                        </div>
+                        <div class="card-body">
+
+                          <p class="card-text"><b>Contador:</b> {{ item.ownMeter ? 'Propio' : 'En alquiler' }}</p>
+                          <p class="card-text"><b>CUP:</b> {{ item.cup }}</p>
+                          <p class="card-text"><b>Potencia contratada:</b> {{ item.powerContracted }}</p>
+                        </div>
+                      </div>
+                    </section>
+                    <section>
+                      <div class="card mb-3">
+                        <div class="card-header bg-primary text-white">
+                          Tipo de Tarifa
+                        </div>
+                        <div class="card-body">
+
+                          <p><b>Nombre de la tarifa:</b> {{ item.tariffName }}</p>
+                          <p><b>Descripción de la tarifa:</b> {{ item.tariffDescription }}</p>
+                        </div>
+                      </div>
+
+                    </section>
+                    <section>
+                        <div class="card mb-3" *ngIf="item.invoices.length<=0">
+                          <div class="card-header bg-success text-white">Periodo De Facturación</div>
+                          <div class="card-body">
+                            Aún se encuentra en periodo de facturación
+                          </div>
+                        </div>
+
+                      <table class="table" *ngIf="item.invoices.length>0">
+                        <thead>
+                          <tr>
+                            <th scope="col">Fecha de emisión</th>
+                            <th scope="col">Consumo</th>
+                            <th scope="col">Importe</th>
+                            <th scope="col">Estado de pago</th>
+                            <th scope="col">Acciones</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <ng-container *ngFor="let invoice of item.invoices ; let i = index ">
+                            <!-- Fila principal, se aplicará el efecto striped automáticamente -->
+                            <tr data-bs-toggle="collapse" [attr.data-bs-target]="'#detalle' + i" aria-expanded="false" [attr.aria-controls]="'detalle' + i">
+                              <td>{{ invoice.issuedDate | date:'dd/MM/yyyy' }}</td>
+                              <td>{{ invoice.consumptionKWh | customUnitPowerEnergyHours: 'kWh' }}</td>
+                              <td>{{ invoice.amount | customCurrency }}</td>
+                              <td>{{ invoice.paymentStatus | paymentStatus }}</td>
+                              <td>
+                                <button class="btn"
+                                        [ngClass]="{'btn-outline-danger': invoice.paymentStatus === 2,
+                                                 'btn-outline-success': invoice.paymentStatus !== 2
+                                                }">
+                                  Ver detalles
+                                </button>
+                              </td>
+                            </tr>
+
+                            <tr [id]="'detalle' + i" class="collapse">
+                              <td colspan="5">
+                                <div class="p-2">
+                                  <div class="card mb-3">
+                                    <div [ngClass]="{'bg-warning text-white': invoice.paymentStatus === 2,
+                                                 'bg-success text-white': invoice.paymentStatus !== 2
+                                                }"
+                                         class="card-header">
+
+                                      Detalles de Factura
+                                    </div>
+                                    <div class="card-body">
+                                      <div><b>Fecha de vencimiento:</b> {{ invoice.issuedDate | date:'dd/MM/yyyy' }}</div>
+                                      <div><b>Descripción:</b> {{ invoice.paymentStatus | paymentStatus }}</div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                          </ng-container>
+                        </tbody>
+                      </table>
+                      <div class="col-md-6 offset-2">
+
+                      </div>
+                      <div class="card mb-3">
+                        <div class="card-header bg-primary text-white">Detalles de Abono</div>
+                        <div class="card-body">
+                          <p class="card-text"><b>Forma de pago:</b> Domiciliación bancaria</p>
+                          <p class="card-text">
+                            <b>IBAN:</b> <span [attr.data-bs-toggle]="item.bankAccount ? 'tooltip' : null" title="{{ item.bankAccount }}">{{ item.bankAccount | maskSensitiveInfo:9:'****' }}</span>
+                          </p>
+                          <ng-container *ngIf="item.invoices.length>0">
+                            <p class="card-text"><b>Fecha de vencimiento:</b> {{ item.dueDate | date:'dd/MM/yyyy' }}</p>
+                          </ng-container>
+                          <p class="card-text"><i>Su pago se justifica con el correspondiente apunte bancario.</i></p>
+                        </div>
+                      </div>
+                    </section>
+                    <section>
+                      <div class="card mb-3">
+                        <div class="card-header bg-primary text-white">
+                          Datos de la Instalación
+                        </div>
+                        <div class="card-body">
+                          <p><b>Capacidad:</b> {{ item.solarCapacity }}W</p>
+                          <p><b>Inyección:</b> {{ item.solarInjection ? 'Sí' : 'No' }}</p>
+                          <p><b>Batería:</b> {{ item.solarBattery ? 'Sí' : 'No' }}</p>
+                          <ng-container *ngIf="item.solarBattery">
+                            <p><b>Descripción de la batería:</b> {{ item.solarBatteryDescription }}</p>
+                          </ng-container>
+                        </div>
+                      </div>
+
+
+                    </section>
+
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+    <div class="col-md-12" *ngIf="items.length > itemsPerPage">
+      <pagination-controls class="my-pagination"
+                           previousLabel="Anterior"
+                           nextLabel="Siguiente"
+
+                           (pageChange)="onPageChange($event)"
+                           name="pageSelector"
+                           id="first">
+      </pagination-controls>
+    </div>
+
+  </div>
+</div>

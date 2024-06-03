@@ -1,0 +1,8 @@
+.chart--container {
+  height: 100%;
+  width: 100%;
+  min-height: 210px;
+}
+.chart-parent--container {
+  display: flex;
+}

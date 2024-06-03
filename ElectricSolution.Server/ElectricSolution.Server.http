@@ -1,0 +1,6 @@
+@ElectricSolution.Server_HostAddress = http://localhost:5047
+
+GET {{ElectricSolution.Server_HostAddress}}/api/EnergyControls/
+Accept: application/json
+
+###

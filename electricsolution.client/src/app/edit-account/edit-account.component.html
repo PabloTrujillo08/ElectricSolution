@@ -1,0 +1,142 @@
+
+
+
+
+<div class="container" [class.blur-effect]="showBlurEffect">
+  <div class="login-container mt-5">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card mb-3">
+          <div class="card-header" style="background: linear-gradient(135deg, #007bff, #0056b3); color: white;">
+            <h5 class="my-0 font-weight-bold"><i class="bi bi-pencil-square"></i> Editar Datos Fiscales</h5>
+          </div>
+          <div class="card-body">
+            <!-- Primer formulario: Información Personal -->
+            <form (ngSubmit)="update()">
+              
+              <!-- Contenido del primer formulario -->
+              <div class="row g-3">
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label for="Name" class="d-flex">Nombre</label>
+                    <input type="text" id="Name" [(ngModel)]="Name" name="Name" class="form-control" required>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label for="LastName" class="d-flex">Apellido</label>
+                    <input type="text" id="LastName" [(ngModel)]="LastName" name="LastName" class="form-control" required>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label for="email" class="d-flex">Email</label>
+                    <input type="email" id="email" [(ngModel)]="email" name="email" class="form-control" required>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label for="userName" class="d-flex">Nombre de Usuario</label>
+                    <input type="text" id="userName" [(ngModel)]="UserName" name="userName" class="form-control" required>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label for="phoneNumber" class="d-flex">Teléfono</label>
+                    <input type="text" id="phoneNumber" [(ngModel)]="PhoneNumber" name="phoneNumber" class="form-control" required>
+                  </div>
+                </div>
+
+              </div>
+              <div class="row g-3">
+                <div class="col-sm-6">
+                  <div class="form-group d-flex flex-column align-items-start">
+                    <label for="Address" class="d-flex mt-3">Dirección</label>
+                    <input type="text" id="Address" [(ngModel)]="Address" name="Address" class="form-control" required>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="form-group d-flex flex-column align-items-start">
+                    <label for="doorNumber" class="d-flex mt-3">Puerta</label>
+                    <input type="text" id="DoorNumber" [(ngModel)]="DoorNumber" name="DoorNumber" class="form-control" required>
+                  </div>
+                </div>
+              </div>
+              <div class="row g-3">
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label for="City" class="d-flex mt-3">Ciudad</label>
+                    <select id="Province" name="Province" class="form-select" required [(ngModel)]="selectedProvince">
+                      <option value="" disabled selected>Selecciona una ciudad</option>
+                      <option *ngFor="let province of Provinces" [value]="province.id">{{ province.name }}</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label for="ZipCode" class="d-flex mt-3">Código Postal</label>
+                    <input type="text" id="ZipCode" [(ngModel)]="ZipCode" name="ZipCode" class="form-control" required>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-auto mt-5 d-flex justify-content-end">
+                <button type="submit" class="btn btn-success mr-2">Guardar</button>
+              </div>
+              <div *ngIf="feedbackMessage" class="alert mt-3" [ngClass]="isSuccess ? 'alert-success' : 'alert-danger'">
+                <span>{{ feedbackMessage }}</span>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header" style="background: linear-gradient(135deg, #007bff, #0056b3); color: white;">
+            <h5 class="my-0 font-weight-bold"><i class="bi bi-key"></i> Actualizar Contraseña</h5>
+          </div>
+          <div class="card-body">
+            <form (ngSubmit)="ChangePassword()">
+        
+              <div class="col-sm-auto">
+                <div class="form-group">
+                  <label for="password" class="d-flex mt-3">Contraseña Actual</label>
+                  <div class="input-group">
+                    <input [type]="currentPasswordFieldType ? 'text' : 'password'" id="password" [(ngModel)]="password" name="password" class="form-control" required>
+                    <div class="input-group-append">
+                      <button class="btn btn-outline-secondary" type="button" (click)="togglePasswordFieldType('currentPasswordFieldType')">
+                        <i class="bi" [ngClass]="{'icon-eye-visible': currentPasswordFieldType, 'bi-eye-fill': currentPasswordFieldType, 'bi-eye': !currentPasswordFieldType}"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-auto">
+                <div class="form-group">
+                  <label for="confirmPassword" class="d-flex mt-3">Nueva Contraseña</label>
+                  <div class="input-group">
+                    <input [type]="passwordFieldType ? 'text' : 'password'" id="confirmPassword" [(ngModel)]="confirmPassword" name="confirmPassword" class="form-control" required>
+                    <div class="input-group-append">
+                      <button class="btn btn-outline-secondary" type="button" (click)="togglePasswordFieldType('passwordFieldType')">
+                        <i class="bi" [ngClass]="{'icon-eye-visible': passwordFieldType, 'bi-eye-fill': passwordFieldType, 'bi-eye': !passwordFieldType}"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-auto mt-5 d-flex justify-content-end">
+                <button type="submit" class="btn btn-success mr-2">Guardar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="showSuccessAlert" class="alert-container d-flex justify-content-center align-items-center">
+  <div [ngClass]="{'alert-success': alertSuccess, 'alert-danger': !alertSuccess}" class="alert" role="alert">{{ successMessage }}</div>
+</div>
+
+

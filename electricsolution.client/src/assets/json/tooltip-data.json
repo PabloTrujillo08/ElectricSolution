@@ -1,0 +1,9 @@
+{
+  "consumoRedElectrica": "Potencia importada o exportada a la red eléctrica. Si la aguja está a la derecha del 0, zona roja, se está importando energía y el valor aparece en rojo, y si está a la izquierda del 0, zona verde, se está exportando energía y el valor aparece en verde.",
+  "temperaturaInversor": "Temperatura Actual del inversor",
+  "consumoEnergiaHogar": "Muestra la potencia total en tiempo real, que están consumiendo todos los equipos eléctricos conectados en este momento.",
+  "produccionEnergiaEste": "Potencia producida en DC por cada grupo de paneles por separado orientación ESTE.",
+  "produccionEnergiaOeste": "Potencia producida en DC por cada grupo de paneles por separado orientación OESTE.",
+  "potenciaGenerada": "Muestra la potencia de salida que está aportando el inversor a la instalación eléctrica de la vivienda.",
+  "tensionRedElectrica": "Tensión de la red eléctrica (AC)."
+}
